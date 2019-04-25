@@ -68,7 +68,7 @@ namespace BookStore
             if (user != null)
             {
                 var res = await _userManager.CheckPasswordAsync(user, loginView.Password);
-                
+
                 if (res)
                 {
                     var val = _jwtoptions.Value;
@@ -79,19 +79,21 @@ namespace BookStore
                         claims.Add(new Claim(ClaimTypes.Role, item));
                     }
                     var tokenOptions = new JwtSecurityToken(
-                            issuer:val.Issuer,
-                            audience:val.Audience,
-                            signingCredentials:val.SigningCredentials,
+                            issuer: val.Issuer,
+                            audience: val.Audience,
+                            signingCredentials: val.SigningCredentials,
                             claims: claims
                         );
-                    
-                    return Ok(JsonConvert.SerializeObject(new ResponseModel{ AuthToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions)}));
+
+                    return Ok(JsonConvert.SerializeObject(new ResponseModel { AuthToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions) }));
                 }
 
                 ModelState.AddModelError("", "Invalid password");
             }
             else
-                ModelState.AddModelError("Not found", "User not found");
+            {
+                ModelState.AddModelError("Errors", "User not found");
+            }
             return BadRequest(ModelState);
         }
     }

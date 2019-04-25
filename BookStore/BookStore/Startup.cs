@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using BookStore.Helpers;
 using DAL.Data;
 using DAL.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SpaServices;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,7 +42,8 @@ namespace BookStore
                 opts.Password.RequireNonAlphanumeric = false;
                 opts.Password.RequireLowercase = false;
                 opts.Password.RequireUppercase = false;
-            }).AddEntityFrameworkStores<BookStoreContext>();
+            }).AddEntityFrameworkStores<BookStoreContext>()
+            .AddDefaultTokenProviders();
 
             services.AddTransient<Seed>();
 
@@ -60,8 +59,13 @@ namespace BookStore
                 opts.SigningCredentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256);
             });
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+            services.AddAuthentication(opts=> {
+                opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                opts.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            })
+            .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -76,41 +80,35 @@ namespace BookStore
                     };
                 });
 
+
             services.AddMvc(opts =>
             {
 
+            });
+
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "BookStoreClient";
             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, Seed seeder)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.Use(async (context, next) =>
-            {
-                await next();
-
-                if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value) && !context.Request.Path.Value.StartsWith("/api/"))
-                {
-                    context.Request.Path = "/index.html/";
-                    await next();
-                }
-
-            });
-            app.UseMvcWithDefaultRoute();
-
-            
+        {            
             app.UseDefaultFiles();
-
             app.UseStaticFiles();
             seeder.SeedUsers();
             app.UseAuthentication();
+            app.UseSpaStaticFiles();
             app.UseMvc();
-            
+            app.UseSpa(configuration =>
+            {
+                configuration.Options.SourcePath = "BookStoreClient";
+                if (env.IsDevelopment())
+                {
+                    configuration.UseAngularCliServer(npmScript: "start");
+                }
+            });                      
         }
     }
 }
