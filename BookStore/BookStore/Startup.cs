@@ -72,7 +72,7 @@ namespace BookStore
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateIssuerSigningKey = true,
-                        ValidateLifetime = false,
+                        ValidateLifetime = true,
 
                         ValidIssuer = jwtopts["issuer"],
                         ValidAudience = jwtopts["audience"],

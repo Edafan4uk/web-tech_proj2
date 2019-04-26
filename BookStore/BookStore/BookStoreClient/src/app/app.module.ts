@@ -11,6 +11,7 @@ import { HttpErrorInterceptor } from './interceptors/HttpErrorInterceptor';
 import { ShowAuthDirective } from './directives/show-auth.directive';
 import { CatalogModule } from './catalog/catalog.module';
 import { HttpTokenAppenderInterceptor } from './interceptors/HttpTokenAppenderInterceptor';
+import { JwtHelperService, JwtModule } from '@auth0/angular-jwt';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { HttpTokenAppenderInterceptor } from './interceptors/HttpTokenAppenderIn
     FormsModule,
     AccountModule,
     HttpClientModule,
-    CatalogModule
+    CatalogModule,
+    JwtModule.forRoot()
   ],
   providers: [
     {

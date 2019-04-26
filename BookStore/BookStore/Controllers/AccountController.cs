@@ -82,6 +82,7 @@ namespace BookStore
                             issuer: val.Issuer,
                             audience: val.Audience,
                             signingCredentials: val.SigningCredentials,
+                            expires:DateTime.Now.AddSeconds(20),
                             claims: claims
                         );
 

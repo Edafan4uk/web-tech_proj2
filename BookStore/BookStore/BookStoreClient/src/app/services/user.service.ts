@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { ResponseModel } from '../account/models/ResponseModel';
 import { LoginModel } from '../account/models/LoginModel';
 import { RegisterModel } from '../account/models/RegisterModel';
+import { JwtHelperService } from '@auth0/angular-jwt'
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ import { RegisterModel } from '../account/models/RegisterModel';
 export class UserService {
 
   private accountUrl:string = "/api/account";
-  constructor(public http:HttpClient) { }
+  constructor(public http:HttpClient,public jwtHelper:JwtHelperService) { }
 
   login(model:LoginModel):Observable<ResponseModel>{    
     return this.http.post<ResponseModel>(`${this.accountUrl}/login`,model);
@@ -22,6 +23,6 @@ export class UserService {
   }
 
   isAuthenticated():boolean{
-    return !!localStorage.getItem("auth_token");
+    return this.jwtHelper.isTokenExpired(localStorage.getItem('auth_token'));
   }
 }

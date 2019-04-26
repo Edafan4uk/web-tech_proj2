@@ -42,10 +42,14 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/catalog'])
     },
     (error:any)=>{
-      $("#myId").css("display","block");
-      $("#myId").html(error);
+      let temp = $('#myId');
+      temp.addClass("alert-danger");
+      temp.css("display","block");
+      
+      temp.html(error);
       setTimeout(()=>{
-        $("#myId").css("display","none");
+        temp.css("display","none");
+        temp.removeClass("alert-danger");     
       },2000);
     });
   }
