@@ -36,6 +36,7 @@ export class LoginComponent implements OnInit {
   }
 
   submit(){
+    console.log(this.myForm.value);
     console.log(this.logModel)
     this.userService.login(this.logModel).subscribe((data:ResponseModel)=>{
       localStorage.setItem("auth_token",data.AuthToken);

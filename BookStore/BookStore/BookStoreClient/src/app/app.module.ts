@@ -26,17 +26,19 @@ import { JwtHelperService, JwtModule } from '@auth0/angular-jwt';
     AccountModule,
     HttpClientModule,
     CatalogModule,
-    JwtModule.forRoot()
+    JwtModule.forRoot({
+      config:{
+        tokenGetter:function(){
+          return localStorage.getItem("auth_token");
+        },
+        throwNoTokenError:false
+      }
+    })
   ],
   providers: [
     {
       provide:HTTP_INTERCEPTORS,
       useClass:HttpErrorInterceptor,
-      multi:true
-    },
-    {
-      provide:HTTP_INTERCEPTORS,
-      useClass:HttpTokenAppenderInterceptor,
       multi:true
     }
   ],

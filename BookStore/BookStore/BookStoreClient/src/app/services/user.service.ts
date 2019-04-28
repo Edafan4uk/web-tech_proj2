@@ -23,6 +23,13 @@ export class UserService {
   }
 
   isAuthenticated():boolean{
-    return this.jwtHelper.isTokenExpired(localStorage.getItem('auth_token'));
+    try{
+      let isExp = this.jwtHelper.isTokenExpired(localStorage.getItem('auth_token'));
+      console.log(isExp);
+      return isExp;
+    }
+    catch(ex){
+      return true;
+    }
   }
 }
