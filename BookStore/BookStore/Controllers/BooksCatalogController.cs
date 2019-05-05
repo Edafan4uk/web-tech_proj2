@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BookStore.Controllers
 {
     [Route("api/[controller]")]
-    public class BooksCatalogController : ControllerBase
+    public class BooksCatalogController : Controller
     {
         [Authorize]
         [HttpGet]

@@ -166,7 +166,7 @@ namespace BookStore
                     audience: val.Audience,
                     notBefore: now,
                     claims: claims,
-                    expires: now.AddSeconds(20),
+                    expires: now.AddMinutes(20),
                     signingCredentials: val.SigningCredentials
             );
 
