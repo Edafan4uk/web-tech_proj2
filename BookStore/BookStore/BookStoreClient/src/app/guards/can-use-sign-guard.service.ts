@@ -8,7 +8,7 @@ export class CanUseSignGuardService  implements CanActivate{
   constructor(public userService:UserService, public router:Router) { }
 
   canActivate():boolean{
-    if(this.userService.isAuthenticated()){
+    if(this.userService.isAuthenticatedGuards()){
       this.router.navigate(['']);
       return false;
     }

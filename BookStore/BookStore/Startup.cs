@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using BookStore.Helpers;
 using DAL.Data;
@@ -59,6 +60,14 @@ namespace BookStore
                 opts.SigningCredentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256);
             });
 
+            services.Configure<FacebookAuthSettings>(opts =>
+            {
+                var fbSett = _configuration.GetSection("FacebookSet");
+
+                opts.AppId = fbSett["AppId"];
+                opts.AppSecret = fbSett["AppSecret"];
+            });
+
             services.AddAuthentication(opts=> {
                 opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -70,13 +79,17 @@ namespace BookStore
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
+                        ValidIssuer = jwtopts["issuer"],
+
                         ValidateAudience = true,
-                        ValidateIssuerSigningKey = true,
+                        ValidAudience = jwtopts["audience"],
+
                         ValidateLifetime = true,
 
-                        ValidIssuer = jwtopts["issuer"],
-                        ValidAudience = jwtopts["audience"],
-                        IssuerSigningKey = symmetricKey
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = symmetricKey,
+
+                        ClockSkew = TimeSpan.Zero
                     };
                 });
 

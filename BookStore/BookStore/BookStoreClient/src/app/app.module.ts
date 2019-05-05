@@ -1,7 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http' 
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
@@ -10,8 +9,9 @@ import { AccountModule } from './account/account.module';
 import { HttpErrorInterceptor } from './interceptors/HttpErrorInterceptor';
 import { ShowAuthDirective } from './directives/show-auth.directive';
 import { CatalogModule } from './catalog/catalog.module';
-import { HttpTokenAppenderInterceptor } from './interceptors/HttpTokenAppenderInterceptor';
-import { JwtHelperService, JwtModule } from '@auth0/angular-jwt';
+import { JwtModule } from '@auth0/angular-jwt';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
 @NgModule({
   declarations: [
@@ -33,7 +33,8 @@ import { JwtHelperService, JwtModule } from '@auth0/angular-jwt';
         },
         throwNoTokenError:false
       }
-    })
+    }),
+    
   ],
   providers: [
     {

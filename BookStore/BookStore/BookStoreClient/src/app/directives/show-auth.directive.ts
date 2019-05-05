@@ -17,11 +17,14 @@ export class ShowAuthDirective implements OnInit{
               private viewContainer:ViewContainerRef) { }
 
   ngOnInit(): void {
-    if((!this.condition&&this.userService.isAuthenticated())||(this.condition&&!this.userService.isAuthenticated())){
-      this.viewContainer.createEmbeddedView(this.templateRef);
-    }
-    else{
-      this.viewContainer.clear();
-    }
+    this.userService.currentToken.subscribe((isAuthenticated:boolean)=>{
+      if((!this.condition&&isAuthenticated||(this.condition&&!isAuthenticated)))
+      {
+        this.viewContainer.createEmbeddedView(this.templateRef);
+      }
+      else{
+        this.viewContainer.clear();
+      }
+    });
   }
 }

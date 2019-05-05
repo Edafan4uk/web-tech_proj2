@@ -2,8 +2,8 @@
   <div class="form-row align-items-center">
     <label class="col-md-4" for="validationUserName">Email</label>
     <div class="col-md-8">
-      <input type="text" [class.is-valid]="valid('userName')" [class.is-invalid]="invalid('userName')"
-       class="form-control" placeholder="Email" id="validationUserName" formControlName="userName" [(ngModel)]="logModel.UserName">
+      <input type="text" [class.is-valid]="valid('UserName')" [class.is-invalid]="invalid('UserName')"
+       class="form-control" placeholder="Email" id="validationUserName" formControlName="UserName">
       <div class="invalid-feedback">
         Email is required and must match a template:[...]@[...].[...] with max-length of 50 symbols
       </div>
@@ -15,15 +15,17 @@
   <div class="form-row align-items-center mt-2">
       <label class="col-md-4" for="validationPassword">Password</label>
       <div class="col-md-8">
-        <input type="password" [class.is-valid]="valid('password')" [class.is-invalid]="invalid('password')"
-         class="form-control" placeholder="password" id="validationPassword" formControlName="password" [(ngModel)]="logModel.Password">
+        <input type="password" [class.is-valid]="valid('Password')" [class.is-invalid]="invalid('Password')"
+         class="form-control" placeholder="password" id="validationPassword" formControlName="Password">
         <div class="invalid-feedback">
-          Password is required field
+          Password is required field with length of 8 symbols
         </div>
         <div class="valid-feedback">
           Nice!
         </div>
       </div>   
   </div>
-  <button class="btn btn-primary mt-3" [disabled]="myForm.invalid">Submit</button>
+  <button class="btn btn-primary mt-3" [disabled]="myForm.invalid">Submit</button>  
 </form>
+
+<button *ngIf="isOnline()" class="btn btn-primary mt-3" (click)="loginFacebook()" style="width:100%">Login with Facebook</button>

@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { routes } from './account-routing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CanUseSignGuardService } from '../guards/can-use-sign-guard.service';
+import { ValidationService } from '../services/validation.service';
 
 
 @NgModule({
@@ -20,6 +21,8 @@ import { CanUseSignGuardService } from '../guards/can-use-sign-guard.service';
     LoginComponent,
     RegisterComponent
   ],
-  providers:[CanUseSignGuardService]
+  providers:[
+    CanUseSignGuardService
+  ]
 })
 export class AccountModule { }

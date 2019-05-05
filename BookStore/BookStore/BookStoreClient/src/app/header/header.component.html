@@ -16,6 +16,9 @@
       <li class="nav-item active">
         <a class="nav-link" *appShowAuth="true" routerLink='/account/register'><button class="btn btn-sm btn-outline-primary">Register</button></a>
       </li>
+      <li class="nav-item active">
+        <a class="nav-link" *appShowAuth="false" routerLink='/account/login' (click)="logout()"><button class="btn btn-sm btn-outline-primary">Logout</button></a>
+      </li>
     </ul>
   </div>
 </nav>

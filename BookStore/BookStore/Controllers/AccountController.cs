@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BookStore.Helpers;
@@ -21,12 +22,17 @@ namespace BookStore
     public class AccountController : Controller
     {
         public readonly UserManager<User> _userManager;
-        public readonly IOptions<JwtOptions> _jwtoptions;
+        public readonly JwtOptions _jwtoptions;
+        public readonly FacebookAuthSettings _facebookAuthSettings;
+        private static readonly HttpClient Client = new HttpClient();
 
-        public AccountController(UserManager<User> userManager, IOptions<JwtOptions> jwtOptions)
+        public AccountController(UserManager<User> userManager, 
+            IOptions<JwtOptions> jwtOptions,
+            IOptions<FacebookAuthSettings> fbOpts)
         {
             _userManager = userManager;
-            _jwtoptions = jwtOptions;
+            _jwtoptions = jwtOptions.Value;
+            _facebookAuthSettings = fbOpts.Value;
         }
 
         [HttpPost("register")]
@@ -49,7 +55,7 @@ namespace BookStore
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(userToRegister, "User");
-                return Ok("Account created");
+                return Ok();
             }
             foreach(var item in result.Errors)
             {
@@ -71,22 +77,9 @@ namespace BookStore
 
                 if (res)
                 {
-                    var val = _jwtoptions.Value;
-                    var roles = await _userManager.GetRolesAsync(user);
-                    var claims = new List<Claim>();
-                    foreach (var item in roles)
-                    {
-                        claims.Add(new Claim(ClaimTypes.Role, item));
-                    }
-                    var tokenOptions = new JwtSecurityToken(
-                            issuer: val.Issuer,
-                            audience: val.Audience,
-                            signingCredentials: val.SigningCredentials,
-                            expires:DateTime.Now.AddSeconds(20),
-                            claims: claims
-                        );
+                    var jwt = await GenerateJwt(user);
 
-                    return Ok(JsonConvert.SerializeObject(new ResponseModel { AuthToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions) }));
+                    return Ok(jwt);
                 }
 
                 ModelState.AddModelError("", "Invalid password");
@@ -96,6 +89,88 @@ namespace BookStore
                 ModelState.AddModelError("Errors", "User not found");
             }
             return BadRequest(ModelState);
+        }
+
+        [HttpPost("facebookLogin")]
+        public async Task<IActionResult> Facebook([FromBody]FacebookViewModel model)
+        {
+            var appAccessTokenResponse = await Client.GetStringAsync
+                ($"https://graph.facebook.com/oauth/access_token?client_id={_facebookAuthSettings.AppId}&client_secret={_facebookAuthSettings.AppSecret}&grant_type=client_credentials");
+            var appAccessToken = JsonConvert.DeserializeObject<FacebookAppAccessToken>(appAccessTokenResponse);
+
+            var userAccessTokenValidationResponse = await Client.GetStringAsync
+                ($"https://graph.facebook.com/debug_token?input_token={model.AccessToken}&access_token={appAccessToken.AccessToken}");
+            var userAccessTokenValidation = JsonConvert.DeserializeObject<FacebookUserAccessTokenValidation>(userAccessTokenValidationResponse);
+
+            if(!userAccessTokenValidation.Data.IsValid)
+            {
+                ModelState.AddModelError("login_failure", "Invalid fb token");
+                return BadRequest(ModelState);
+            }
+
+            var userInfoResponse = await Client.GetStringAsync
+                ($"https://graph.facebook.com/v3.3/me?fields=id,email,first_name,last_name,name&access_token={model.AccessToken}");
+            var userInfo = JsonConvert.DeserializeObject<FacebookUserData>(userInfoResponse);
+
+            var user = await _userManager.FindByEmailAsync(userInfo.Email);
+
+            if(user == null)
+            {
+                var appUser = new User
+                {
+                    Email = userInfo.Email,
+                    UserName = userInfo.Email,
+                    FirstName = userInfo.FirstName,
+                    LastName = userInfo.LastName,
+                    FacebookId = userInfo.Id
+                };
+
+                var result = await _userManager.CreateAsync(appUser, Convert.ToBase64String(Guid.NewGuid().ToByteArray()));
+
+                if (!result.Succeeded)
+                {
+                    foreach (var item in result.Errors)
+                    {
+                        ModelState.AddModelError(item.Code, item.Description);
+                    }
+                }
+
+                await _userManager.AddToRoleAsync(appUser, "User");
+            }
+
+            var localUser = await _userManager.FindByNameAsync(userInfo.Email);
+
+            if(localUser == null)
+            {
+                ModelState.AddModelError("login_failure", "Failed to create local user account");
+                return BadRequest(ModelState);
+            }
+
+            var jwt = await GenerateJwt(localUser);
+
+            return Ok(jwt);
+        }
+
+        private async Task<string> GenerateJwt(User user)
+        {
+            var val = _jwtoptions;
+            var roles = await _userManager.GetRolesAsync(user);
+            var claims = new List<Claim>();
+            var now = DateTime.UtcNow;
+            foreach (var item in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, item));
+            }
+            var tokenOptions = new JwtSecurityToken(
+                    issuer: val.Issuer,
+                    audience: val.Audience,
+                    notBefore: now,
+                    claims: claims,
+                    expires: now.AddSeconds(20),
+                    signingCredentials: val.SigningCredentials
+            );
+
+            return JsonConvert.SerializeObject(new ResponseModel { AuthToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions) });
         }
     }
 }
