@@ -14,7 +14,7 @@ export class HttpErrorInterceptor implements HttpInterceptor{
             catchError((err:HttpErrorResponse)=>{
                 if(err.status === 401){
                     this.router.navigate(['account/login']);
-                    //return;
+                    throwError("Not authorized")
                 }
                 else{
                     let errorMessage = '';

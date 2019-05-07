@@ -1,0 +1,43 @@
+<form class="mt-2">
+  <div class="form-group form-inline">
+      Full text search: <input class="form-control ml-2" type="text" name="searchTerm" [(ngModel)]="service.searchTerm"/>
+      <span class="ml-3" *ngIf="service.loading$ | async">Loading...</span>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr class="row">
+        <th class="col-sm-3">#</th>
+        <th class="col-sm-3">Roles</th>
+        <th class="col-sm-3" sortable="UserName" (sort)="onSort($event)">UserName</th>
+        <th class="col-sm-3"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="row" *ngFor="let user of users$ | async">
+        <th class="col-sm-3">{{user.id}}</th>
+        <td class="col-sm-3">
+          {{user.roles}}
+        </td>
+        <td class="col-sm-3"><ngb-highlight [result]="user.userName" [term]="service.searchTerm"></ngb-highlight></td>
+        <td class="col-sm-3">
+          <button class="btn btn-primary" (click)="openModal(user)">Edit roles</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="row justify-content-center">
+    <!-- <ngb-pagination
+      [collectionSize]="total$ | async" [(page)]="service.page" [pageSize]="service.pageSize">
+    </ngb-pagination> -->
+    <ngb-pagination class="col-md-8" [collectionSize]="total$ | async" [(page)]="service.page" [pageSize]="service.pageSize" [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true"></ngb-pagination>
+
+    <select class="col-md-4" class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
+      <option [ngValue]="2">2 items per page</option>
+      <option [ngValue]="4">4 items per page</option>
+      <option [ngValue]="6">6 items per page</option>
+    </select>
+  </div>
+
+</form>

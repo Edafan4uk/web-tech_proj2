@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using BookStore.Helpers.Models;
 using DAL.DTO_s;
 using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -24,9 +26,38 @@ namespace BookStore.Controllers
         }
 
         [HttpGet("usersWithRoles")]
-        public async Task<IActionResult> GetUsersWithRoles()
+        public async Task<IActionResult> GetUsersWithRoles(ForTableModel model)
         {
-            var users = await _userManager.Users.ToListAsync();
+            var propInfo = GetPropertyInfo(model.SortColumn);
+
+            var usersList = _userManager.Users;
+
+            if (model.SearchTerm != null)
+            {
+                usersList = usersList.Where(u => u.UserName.Contains(model.SearchTerm));
+            }
+
+            switch (model.SortDirection)
+            {
+                case "asc":
+                     usersList = propInfo != null ? 
+                        usersList.OrderBy(u => propInfo.GetValue(u)):usersList.OrderBy(u=>u.Id);
+                     break;
+                case "desc":
+                    usersList = propInfo != null?
+                        usersList.OrderByDescending(u => propInfo.GetValue(u)):usersList.OrderByDescending(u=>u.Id);
+                    break;
+                default:
+                    usersList = propInfo == null ?
+                        usersList : usersList.OrderBy(u => propInfo.GetValue(u));
+                    break;
+            }
+            var users = await usersList
+                .Skip((model.Page - 1) * model.PageSize)
+                .Take(model.PageSize)
+                .ToListAsync();
+
+            var total = await usersList.CountAsync();
 
             List<UserDTO> userDTOs = new List<UserDTO>();
 
@@ -44,7 +75,11 @@ namespace BookStore.Controllers
                 });
             }
 
-            return Ok(userDTOs);
+            return Ok(new
+            {
+                entities = userDTOs,
+                total
+            });
         }
 
         [HttpPost("addToRoles")]
@@ -81,6 +116,12 @@ namespace BookStore.Controllers
             model.Roles = await _userManager.GetRolesAsync(user);
 
             return Ok(model);
+        }
+        private PropertyInfo GetPropertyInfo(string columnName)
+        {
+            columnName = columnName ?? "Id";
+            var type = typeof(User);
+            return type.GetProperty(columnName);
         }
     }
 }

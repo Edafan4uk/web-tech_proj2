@@ -1,16 +1,18 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, PipeTransform } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
 import { LoginModel } from '../models/LoginModel';
 import { ResponseModel } from '../models/ResponseModel';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import * as $ from 'jquery';
 import { Router } from '@angular/router';
+import { DecimalPipe } from '@angular/common';
 declare var FB:any;
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
+  providers:[DecimalPipe]
 })
 export class LoginComponent implements OnInit {
 
@@ -18,9 +20,12 @@ export class LoginComponent implements OnInit {
   myForm:FormGroup;
   logModel:LoginModel;
 
-  constructor(private userService:UserService, private router:Router,private zone:NgZone) { }
+  constructor(private userService:UserService, private router:Router,private zone:NgZone,
+    private decPipe:DecimalPipe) { }
 
-  ngOnInit() { 
+  ngOnInit() {
+    let forTest:PipeTransform = this.decPipe;
+    console.log(forTest.constructor.name);
     this.myForm =  this.createForm();   
     this.logModel = new LoginModel();
     

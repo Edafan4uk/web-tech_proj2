@@ -7,6 +7,7 @@ import { routes } from './account-routing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CanUseSignGuardService } from '../guards/can-use-sign-guard.service';
 import { ValidationService } from '../services/validation.service';
+import { AdminUserService } from '../services/admin/admin-user.service';
 
 
 @NgModule({

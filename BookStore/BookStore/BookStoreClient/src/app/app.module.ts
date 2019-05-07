@@ -10,14 +10,15 @@ import { HttpErrorInterceptor } from './interceptors/HttpErrorInterceptor';
 import { ShowAuthDirective } from './directives/show-auth.directive';
 import { CatalogModule } from './catalog/catalog.module';
 import { JwtModule } from '@auth0/angular-jwt';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { AdminModule } from './admin/admin.module';
+import { HasRoleDirective } from './directives/has-role.directive';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    ShowAuthDirective
+    ShowAuthDirective,
+    HasRoleDirective
   ],
   imports: [
     BrowserModule,
@@ -34,7 +35,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
         throwNoTokenError:false
       }
     }),
-    
+    AdminModule
   ],
   providers: [
     {
@@ -43,6 +44,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
       multi:true
     }
   ],
+  exports:[],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
