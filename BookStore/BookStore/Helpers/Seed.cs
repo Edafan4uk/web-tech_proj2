@@ -43,8 +43,7 @@ namespace BookStore
                 var roles = new List<Role>
                 {
                     new Role{ Name = "Admin"},
-                    new Role{ Name = "Moderator"},
-                    new Role{ Name = "User" }
+                    new Role{ Name = "Moderator"}
                 };
 
                 foreach (var item in roles)

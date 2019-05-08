@@ -30,7 +30,10 @@ namespace BookStore.Controllers
         {
             var propInfo = GetPropertyInfo(model.SortColumn);
 
-            var usersList = _userManager.Users;
+            var nn = User.Identity.Name;
+            var usersList = _userManager.Users.Where(u=>u.UserName!=User.Identity.Name);
+
+           
 
             if (model.SearchTerm != null)
             {
@@ -85,6 +88,16 @@ namespace BookStore.Controllers
         [HttpPost("addToRoles")]
         public async Task<IActionResult> AddToRoles([FromBody] UserDTO model)
         {
+            if(model.UserName == User.Identity.Name)
+            {
+                return BadRequest("You cannot modify you own claims!");
+            }
+
+            if(model.Roles.Any(r=>r == "Admin"))
+            {
+                return StatusCode(403, "You cannot asign user role claim 'Admin'");
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -96,6 +109,11 @@ namespace BookStore.Controllers
             {
                 ModelState.AddModelError("", $"Cannot find user with username: {model.UserName}");
                 return NotFound(ModelState);
+            }
+
+            if(await _userManager.IsInRoleAsync(user, "Admin"))
+            {
+                return StatusCode(403, "You cannot modify roles for users with 'Admin' role claim!"); 
             }
 
             var userRoles = await _userManager.GetRolesAsync(user);

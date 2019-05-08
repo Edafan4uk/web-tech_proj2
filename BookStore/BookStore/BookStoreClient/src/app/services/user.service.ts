@@ -32,9 +32,24 @@ export class UserService{
     if(!this.isAuthenticated()){
       return false;
     }
-    let userRoles = this.jwtHelper.decodeToken(localStorage.getItem("auth_token"))['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] as Array<string>;
-    console.log(userRoles)
-    let isInRole:boolean = false;
+    let isInRole = false;
+    let userRoles = this.jwtHelper.decodeToken(localStorage.getItem("auth_token"))['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+    if(!userRoles)
+      return isInRole;
+    
+    let arrRoles = userRoles as Array<string>;
+    if(arrRoles.constructor.name === "String"){
+     for(let i of requiredRoles){
+       if(i == userRoles){
+         isInRole = true;
+         break;
+       }
+     }
+     return isInRole;
+    }
+
+    userRoles = userRoles as Array<string>;
+    
     for(let i of userRoles)
     {
       for(let j of requiredRoles)
@@ -45,6 +60,7 @@ export class UserService{
       if(isInRole)
         break;
     }
+    console.log(isInRole)
     return isInRole;
   }
 

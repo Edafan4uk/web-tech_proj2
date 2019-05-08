@@ -54,7 +54,6 @@ namespace BookStore
             var result = await _userManager.CreateAsync(userToRegister, model.Password);
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(userToRegister, "User");
                 return Ok();
             }
             foreach(var item in result.Errors)
@@ -67,6 +66,11 @@ namespace BookStore
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginViewMode loginView)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return BadRequest("You are already logged in!");
+            }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -83,6 +87,8 @@ namespace BookStore
                 }
 
                 ModelState.AddModelError("", "Invalid password");
+                if (user.FacebookId != null)
+                    ModelState.AddModelError("", "Your first sign in request was probably made by log in with FB button, so please try to login the same way");
             }
             else
             {
@@ -134,8 +140,6 @@ namespace BookStore
                         ModelState.AddModelError(item.Code, item.Description);
                     }
                 }
-
-                await _userManager.AddToRoleAsync(appUser, "User");
             }
 
             var localUser = await _userManager.FindByNameAsync(userInfo.Email);
@@ -161,6 +165,7 @@ namespace BookStore
             {
                 claims.Add(new Claim(ClaimTypes.Role, item));
             }
+            claims.Add(new Claim(ClaimTypes.Name, user.UserName));
             var tokenOptions = new JwtSecurityToken(
                     issuer: val.Issuer,
                     audience: val.Audience,

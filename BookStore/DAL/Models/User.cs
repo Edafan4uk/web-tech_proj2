@@ -11,5 +11,8 @@ namespace DAL.Models
         public string LastName { get; set; }
         public long? FacebookId { get; set; }
         public ICollection<UserRole> UserRoles { get; set; }
+        public ICollection<BookUser> BookUsers { get; set; }
+        public ICollection<Comment> Comments { get; set; }
+        public ICollection<Rating> Ratings { get; set; }
     }
 }

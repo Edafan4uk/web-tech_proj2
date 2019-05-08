@@ -21,16 +21,20 @@ export class UserRolesModalComponent implements OnInit {
 
   ngOnInit() {
     this.possibleRoles = [
-      "User",
       "Moderator",
       "Admin"
     ];
     this.rolesForm = this.createForm(this.user);
   }
 
+
   createForm(user:UserForA):FormGroup{
     const formControls = this.possibleRoles.map(v=>{
-      return new FormControl(user.roles.some(val=>val===v));
+      let cont = new FormControl({
+          value:user.roles.some(val=>val===v),
+          disabled:v==="Admin"
+        });
+      return cont;
     });
     return this.fb.group({
       roles:new FormArray(formControls)
