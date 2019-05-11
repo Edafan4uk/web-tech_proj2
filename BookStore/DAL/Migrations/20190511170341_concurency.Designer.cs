@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(BookStoreContext))]
-    [Migration("20190508102457_notInit")]
-    partial class notInit
+    [Migration("20190511170341_concurency")]
+    partial class concurency
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,6 +43,7 @@ namespace DAL.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("AmInStock")
+                        .IsConcurrencyToken()
                         .ValueGeneratedOnAdd()
                         .HasDefaultValue(0);
 

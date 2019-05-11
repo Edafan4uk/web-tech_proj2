@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using AutoMapper;
 using BookStore.Helpers.Models;
-using DAL.DTO_s;
+using BookStore.ViewModels;
 using DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -16,13 +17,15 @@ namespace BookStore.Controllers
 {
     [Route("api/[controller]")]
     [Authorize(Roles = "Admin")]
-    public class AdminController : Controller
+    public class UserController : Controller
     {
         private readonly UserManager<User> _userManager;
+        private readonly IMapper _mapper;
 
-        public AdminController(UserManager<User> manager)
+        public UserController(UserManager<User> manager, IMapper mapper)
         {
-            _userManager = manager;
+            _userManager = manager ?? throw new ArgumentNullException(nameof(manager));
+            _mapper = mapper;
         }
 
         [HttpGet("usersWithRoles")]
@@ -31,9 +34,8 @@ namespace BookStore.Controllers
             var propInfo = GetPropertyInfo(model.SortColumn);
 
             var nn = User.Identity.Name;
-            var usersList = _userManager.Users.Where(u=>u.UserName!=User.Identity.Name);
 
-           
+            var usersList = _userManager.Users.Where(u=>u.UserName!=User.Identity.Name);           
 
             if (model.SearchTerm != null)
             {
@@ -62,7 +64,7 @@ namespace BookStore.Controllers
 
             var total = await usersList.CountAsync();
 
-            List<UserDTO> userDTOs = new List<UserDTO>();
+            List<UserViewModel> userDTOs = new List<UserViewModel>();
 
             IList<string> roles;
 
@@ -70,7 +72,7 @@ namespace BookStore.Controllers
             {
                 roles = await _userManager.GetRolesAsync(item);
 
-                userDTOs.Add(new UserDTO
+                userDTOs.Add(new UserViewModel
                 {
                     Id = item.Id,
                     UserName = item.UserName,
@@ -86,7 +88,7 @@ namespace BookStore.Controllers
         }
 
         [HttpPost("addToRoles")]
-        public async Task<IActionResult> AddToRoles([FromBody] UserDTO model)
+        public async Task<IActionResult> AddToRoles([FromBody] UserViewModel model)
         {
             if(model.UserName == User.Identity.Name)
             {

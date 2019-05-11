@@ -9,7 +9,7 @@ export class AdminUserService extends AbstractService<UserForA> {
 
   constructor(http:HttpClient) {
     super(http);
-    this.apiEntityUrl = "api/admin";
+    this.apiEntityUrl = "api/user";
     this.methodName = "usersWithRoles";
   }
 

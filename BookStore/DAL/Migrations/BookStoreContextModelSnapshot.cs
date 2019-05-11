@@ -41,6 +41,7 @@ namespace DAL.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("AmInStock")
+                        .IsConcurrencyToken()
                         .ValueGeneratedOnAdd()
                         .HasDefaultValue(0);
 

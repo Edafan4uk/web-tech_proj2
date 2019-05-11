@@ -14,6 +14,7 @@ namespace DAL.Configurations
             builder.HasKey(a => a.Id);
 
             builder.Property(a => a.Name)
+                .IsConcurrencyToken()
                 .HasMaxLength(50)
                 .IsRequired(true);
         }

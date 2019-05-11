@@ -16,29 +16,34 @@ namespace DAL.Configurations
             builder
                 .Property(b => b.Name)
                 .HasMaxLength(50)
+                .IsConcurrencyToken()
                 .IsRequired();
 
             builder
                 .Property(b => b.AmInStock)
                 .HasDefaultValue(0)
+                .IsConcurrencyToken()
                 .IsRequired();
 
             builder
                 .Property(b => b.Price)
+                .IsConcurrencyToken()
                 .IsRequired();
 
             builder
                 .HasOne(b => b.Author)
-                .WithMany(a => a.Books)
-                .HasForeignKey(b => b.AuthorId)
+                .WithMany(a => a.Books)                
+                .HasForeignKey(b => b.AuthorId)                
                 .IsRequired();
 
             builder
                  .Property(b => b.CommentsActive)
+                 .IsConcurrencyToken()
                  .IsRequired();
 
             builder
                 .Property(b => b.IsVisibleInCatalog)
+                .IsConcurrencyToken()
                 .IsRequired();
         }
     }

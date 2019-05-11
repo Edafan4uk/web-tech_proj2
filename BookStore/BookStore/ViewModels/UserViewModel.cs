@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace DAL.DTO_s
+namespace BookStore.ViewModels
 {
-    public class UserDTO
+    public class UserViewModel
     {
         public int Id { get; set; }
         public IList<string> Roles { get; set; }

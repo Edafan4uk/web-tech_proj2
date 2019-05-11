@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(BookStoreContext))]
-    [Migration("20190508091232_initial")]
+    [Migration("20190511143011_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,6 +49,8 @@ namespace DAL.Migrations
                     b.Property<int>("AuthorId");
 
                     b.Property<bool>("CommentsActive");
+
+                    b.Property<bool>("IsVisibleInCatalog");
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -181,7 +181,8 @@ namespace DAL.Migrations
                     Price = table.Column<double>(nullable: false),
                     AuthorId = table.Column<int>(nullable: false),
                     AmInStock = table.Column<int>(nullable: false, defaultValue: 0),
-                    CommentsActive = table.Column<bool>(nullable: false)
+                    CommentsActive = table.Column<bool>(nullable: false),
+                    IsVisibleInCatalog = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

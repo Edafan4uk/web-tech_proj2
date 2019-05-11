@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using AutoMapper;
 using BookStore.Helpers;
 using DAL.Data;
 using DAL.Models;
@@ -43,18 +44,19 @@ namespace BookStore
                 opts.Password.RequireNonAlphanumeric = false;
                 opts.Password.RequireLowercase = false;
                 opts.Password.RequireUppercase = false;
-            }).AddEntityFrameworkStores<BookStoreContext>()
+            })
+            .AddEntityFrameworkStores<BookStoreContext>()
             .AddDefaultTokenProviders();
 
             services.AddTransient<Seed>();
 
+            
 
             var jwtopts = _configuration.GetSection("jwtoptions");
             var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtopts["secretkey"]));
 
             services.Configure<JwtOptions>(opts =>
-            {
-                
+            {                
                 opts.Audience = jwtopts["audience"];
                 opts.Issuer = jwtopts["issuer"];
                 opts.SigningCredentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256);
@@ -98,6 +100,8 @@ namespace BookStore
             {
 
             });
+
+            services.AddAutoMapper();
 
             services.AddSpaStaticFiles(configuration =>
             {
