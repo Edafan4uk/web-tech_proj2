@@ -17,7 +17,7 @@ export class UsersComponent implements OnInit {
   users$: Observable<UserForA[]>;
   total$: Observable<number>;
 
-  @ViewChildren(SortableDirective) headers:QueryList<SortableDirective>
+  @ViewChildren(SortableDirective) headers :QueryList<SortableDirective>;
 
   constructor(private service:AdminUserService, private modalSe:NgbModal, private injector:Injector) {
     this.users$ = service.entities$;

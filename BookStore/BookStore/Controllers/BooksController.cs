@@ -75,35 +75,28 @@ namespace BookStore.Controllers
 
             var total = await bookList.CountAsync();
 
-            if (!(User.IsInRole("Admin") || User.IsInRole("Moderator"))){
-                List<BookViewModel> bookViews = new List<BookViewModel>();
+            List<BookViewModel> bookViews = new List<BookViewModel>();
 
-                foreach (var item in books)
-                {
-                    bookViews.Add(_mapper.Map<BookViewModel>(item));
-                }
-
-                return Ok(new
-                {
-                    entities = bookViews,
-                    total
-                });
-            }
-            else
+            foreach (var item in books)
             {
-                List<BookForAdminViewModel> bookForAdmins = new List<BookForAdminViewModel>();
-
-                foreach (var item in books)
-                {
-                    bookForAdmins.Add(_mapper.Map<BookForAdminViewModel>(item));
-                }
-
-                return Ok(new
-                {
-                    entities = bookForAdmins,
-                    total
-                });
+                bookViews.Add(_mapper.Map<BookViewModel>(item));
             }
+
+            return Ok(new
+            {
+                entities = bookViews,
+                total
+            });            
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,Moderator")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var book = await _context.Books
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            return Ok(_mapper.Map<BookForAdminViewModel>(book));
         }
 
         [HttpPost("addBook")]

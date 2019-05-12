@@ -5,13 +5,16 @@ import { routes } from './admin.routing';
 import { UsersComponent } from './users/users.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SortableDirective } from '../directives/sortable.directive';
 import { UserRolesModalComponent } from './user-roles-modal/user-roles-modal.component';
 import { AdminUserService } from '../services/admin/admin-user.service';
 import { HasRoleGuardService } from '../guards/has-role-guard.service';
 
 @NgModule({
-  declarations: [UsersComponent, SortableDirective, UserRolesModalComponent],
+  declarations: 
+  [
+    UsersComponent, 
+    UserRolesModalComponent
+  ],
   imports: [
     CommonModule,
     RouterModule.forRoot(routes),

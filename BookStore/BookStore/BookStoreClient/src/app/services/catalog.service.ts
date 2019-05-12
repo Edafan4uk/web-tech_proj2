@@ -1,15 +1,34 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { AbstractService } from './Generics/abstract.service';
+import { Book } from '../catalog/Models/Book';
+import { BookForAdmin } from '../catalog/Models/BookForAdmin';
 
 @Injectable()
-export class CatalogService {
+export class CatalogService extends AbstractService<Book>{
 
-  private catalogUrl:string = "/api/bookscatalog";
 
-  constructor(public http:HttpClient) { }
+  constructor(http:HttpClient) {
+    super(http);
+    this.apiEntityUrl = "api/books";
+    this.methodName = "getBooks";
+   }
 
-  getCatalog():Observable<any>{
-    return this.http.get(this.catalogUrl);
-  }
+   addBook(book:BookForAdmin):Observable<BookForAdmin>{
+     return this.http.post<BookForAdmin>(`${this.apiEntityUrl}/addBook`,book);
+   }
+
+   getById(id: number):Observable<BookForAdmin>{
+     return this.http.get<BookForAdmin>(`${this.apiEntityUrl}/?id=${id}`);
+   }
+
+   deleteBook(id:number):Observable<any>{
+     return this.http.delete(`${this.apiEntityUrl}/deleteBook/?id=${id}`);
+   }
+
+   updateBook(book:BookForAdmin):Observable<BookForAdmin>{
+     return this.http.put<BookForAdmin>(`${this.apiEntityUrl}/updateBook/?id=${book.id}`,book);
+   }
+
 }
