@@ -12,15 +12,13 @@ import { CatalogModule } from './catalog/catalog.module';
 import { JwtModule } from '@auth0/angular-jwt';
 import { AdminModule } from './admin/admin.module';
 import { HasRoleDirective } from './directives/has-role.directive';
-import { SortableDirective } from './directives/sortable.directive';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     ShowAuthDirective,
-    HasRoleDirective,
-    SortableDirective
+    HasRoleDirective
   ],
   imports: [
     BrowserModule,

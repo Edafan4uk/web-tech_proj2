@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserRolesModalComponent } from './user-roles-modal/user-roles-modal.component';
 import { AdminUserService } from '../services/admin/admin-user.service';
 import { HasRoleGuardService } from '../guards/has-role-guard.service';
+import { CatalogModule } from '../catalog/catalog.module';
 
 @NgModule({
   declarations: 
@@ -20,7 +21,8 @@ import { HasRoleGuardService } from '../guards/has-role-guard.service';
     RouterModule.forRoot(routes),
     NgbModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CatalogModule
   ],
   providers:[AdminUserService, HasRoleGuardService],
   entryComponents:[UserRolesModalComponent]

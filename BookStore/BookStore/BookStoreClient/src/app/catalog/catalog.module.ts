@@ -16,7 +16,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   [
     BooksListComponent, 
     AddToCartModalComponent, 
-    EditBookModalComponent
+    EditBookModalComponent,
+    SortableDirective
   ],
   imports: [
     CommonModule,
@@ -28,6 +29,10 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   providers:[
     AuthGuardService,
     CatalogService
+  ],
+  exports:
+  [
+    SortableDirective
   ],
   entryComponents:
   [
