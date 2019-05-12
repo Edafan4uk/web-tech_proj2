@@ -2,37 +2,38 @@
     <div class="form-group form-inline">
         Full text search: <input class="form-control ml-2" type="text" name="searchTerm" [(ngModel)]="service.searchTerm"/>
         <span class="ml-3" *ngIf="service.loading$ | async">Loading...</span>
+        <button *appHasRole="['Admin','Moderator']" (click)="openModal()" class="btn btn-primary ml-2">Add book</button>
     </div>
   
     <table class="table table-striped">
       <thead>
         <tr class="row">
-            <th class="col-sm">#</th>
-            <th class="col-sm" sortable="Name" (sort)="onSort($event)">Name</th>
-            <th class="col-sm" sortable="Price" (sort)="onSort($event)">Price</th>
-            <th class="col-sm" sortable="AmInStock" (sort)="onSort($event)">Amount available</th>
-            <th class="col-sm">Author</th>
-            <th class="col-sm"></th>
+            <th class="col-md">#</th>
+            <th class="col-md" sortable="Name" (sort)="onSort($event)">Name</th>
+            <th class="col-md" sortable="Price" (sort)="onSort($event)">Price</th>
+            <th class="col-md" sortable="AmInStock" (sort)="onSort($event)">Amount available</th>
+            <th class="col-md">Author</th>
+            <th class="col-md"></th>
         </tr>
       </thead>
       <tbody>
         <tr class="row" *ngFor="let book of books$ | async">
-            <td class="col-sm">
+            <td class="col-md">
 
             </td>
-            <td class="col-sm">
+            <td class="col-md">
                 <ngb-highlight [result]="book.name" [term]="service.searchTerm"></ngb-highlight>
             </td>
-            <td class="col-sm">
+            <td class="col-md">
                 {{book.price}}
             </td>
-            <td class="col-sm">
+            <td class="col-md">
                 {{book.amInStock}}
             </td>
-            <td class="col-sm">
+            <td class="col-md">
                 <ngb-highlight [result]="book.authorName" [term]="service.searchTerm"></ngb-highlight>
             </td>
-            <td class="col-sm">
+            <td class="col-md">
               <!-- <button class="btn btn-primary" (click)="openModal(user)">Edit roles</button> -->
             </td>
         </tr>

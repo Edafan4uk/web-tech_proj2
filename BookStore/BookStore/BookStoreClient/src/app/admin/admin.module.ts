@@ -9,6 +9,7 @@ import { UserRolesModalComponent } from './user-roles-modal/user-roles-modal.com
 import { AdminUserService } from '../services/admin/admin-user.service';
 import { HasRoleGuardService } from '../guards/has-role-guard.service';
 import { CatalogModule } from '../catalog/catalog.module';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: 
@@ -22,7 +23,8 @@ import { CatalogModule } from '../catalog/catalog.module';
     NgbModule,
     FormsModule,
     ReactiveFormsModule,
-    CatalogModule
+    CatalogModule,
+    SharedModule
   ],
   providers:[AdminUserService, HasRoleGuardService],
   entryComponents:[UserRolesModalComponent]

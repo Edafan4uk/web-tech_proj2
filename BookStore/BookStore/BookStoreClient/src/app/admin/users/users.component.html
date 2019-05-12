@@ -7,20 +7,20 @@
   <table class="table table-striped">
     <thead>
       <tr class="row">
-        <th class="col-sm-3">#</th>
-        <th class="col-sm-3">Roles</th>
-        <th class="col-sm-3" sortable="UserName" (sort)="onSort($event)">UserName</th>
-        <th class="col-sm-3"></th>
+        <th class="col-md-3">#</th>
+        <th class="col-md-3">Roles</th>
+        <th class="col-md-3" sortable="UserName" (sort)="onSort($event)">UserName</th>
+        <th class="col-md-3"></th>
       </tr>
     </thead>
     <tbody>
       <tr class="row" *ngFor="let user of users$ | async">
-        <th class="col-sm-3">{{user.id}}</th>
-        <td class="col-sm-3">
+        <th class="col-md-3">{{user.id}}</th>
+        <td class="col-md-3">
           {{user.roles}}
         </td>
-        <td class="col-sm-3"><ngb-highlight [result]="user.userName" [term]="service.searchTerm"></ngb-highlight></td>
-        <td class="col-sm-3">
+        <td class="col-md-3"><ngb-highlight [result]="user.userName" [term]="service.searchTerm"></ngb-highlight></td>
+        <td class="col-md-3">
           <button class="btn btn-primary" (click)="openModal(user)">Edit roles</button>
         </td>
       </tr>

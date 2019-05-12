@@ -1,3 +1,91 @@
-<p>
-  add-to-cart-modal works!
-</p>
+
+<div class="modal-header">
+  <h4 class="modal-title">Hi there!</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="bookForm" novalidate (ngSubmit)="submit()">
+    <div class="form-row align-items-center mt-2">
+      <label class="col-md-4" for="validationName">Name</label>
+      <div class="col-md-8">
+        <input [class.is-valid]="valid('name')" [class.is-invalid]="invalid('name')"
+         class="form-control" placeholder="Name" id="validationName" formControlName="name">
+        <div class="invalid-feedback">
+          Name is required with length of 50 symbols
+        </div>
+        <div class="valid-feedback">
+        </div>
+      </div>
+    </div>
+    <div class="form-row align-items-center mt-2">
+      <label class="col-md-4" for="validationPrice">Price</label>
+      <div class="col-md-8">
+        <input [class.is-valid]="valid('price')" [class.is-invalid]="invalid('price')"
+         class="form-control" placeholder="Price" id="validationPrice" formControlName="price">
+        <div class="invalid-feedback">
+          Price is required and positive number
+        </div>
+        <div class="valid-feedback">
+        </div>
+      </div>
+    </div>
+    <div class="form-row align-items-center mt-2">
+      <label class="col-md-4" for="validationAm">Amount</label>
+      <div class="col-md-8">
+        <input [class.is-valid]="valid('amInStock')" [class.is-invalid]="invalid('amInStock')"
+         class="form-control" placeholder="Amount" id="validationAm" formControlName="amInStock">
+        <div class="invalid-feedback">
+          Amount is required positive number
+        </div>
+        <div class="valid-feedback">
+        </div>
+      </div>
+    </div>
+    <div class="form-row align-items-center mt-2">
+      <label class="col-md-4" for="validationAuth">Author</label>
+      <div class="col-md-8">
+        <input [class.is-valid]="valid('authorName')" [class.is-invalid]="invalid('authorName')"
+         class="form-control" placeholder="Author" id="validationAuth" formControlName="authorName">
+        <div class="invalid-feedback">
+          Author is required with length of 50 symbols
+        </div>
+        <div class="valid-feedback">
+        </div>
+      </div>
+    </div>
+    <div class="form-row align-items-center mt-2">
+      <label class="col-md-4" for="validationCom">Comments Active</label>
+      <div class="col-md-8">
+        <input type="checkbox" [class.is-valid]="valid('commentsActive')" 
+         [class.is-invalid]="invalid('commentsActive')"
+         class="form-control"
+         id="validationCom" formControlName="commentsActive">
+        <div class="invalid-feedback">
+          This field is required
+        </div>
+        <div class="valid-feedback">
+        </div>
+      </div>
+    </div>
+    <div class="form-row align-items-center mt-2">
+      <label class="col-md-4" for="validationVis">Visible</label>
+      <div class="col-md-8">
+        <input type="checkbox" [class.is-valid]="valid('isVisible')" 
+         [class.is-invalid]="invalid('isVisible')"
+         class="form-control" 
+         id="validationVis" formControlName="isVisible">
+        <div class="invalid-feedback">
+          This field is required
+        </div>
+        <div class="valid-feedback">
+        </div>
+      </div>
+    </div>
+    <div class="form-group">            
+      <button class="btn btn-primary" [disabled]="bookForm.invalid">Submit</button>
+      <button class="btn btn-danger mr-2" (click)="activeModal.dismiss();$event.preventDefault()">Cancel</button>
+    </div>
+  </form>  
+</div>

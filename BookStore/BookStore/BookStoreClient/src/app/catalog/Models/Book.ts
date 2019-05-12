@@ -1,8 +1,8 @@
 export interface Book{
-    id:number;
+    id?:number;
     name:string;
     price:number;
-    amInStock:string;
+    amInStock?:string;
     authorName:string;
     commentsActive:boolean;
 }

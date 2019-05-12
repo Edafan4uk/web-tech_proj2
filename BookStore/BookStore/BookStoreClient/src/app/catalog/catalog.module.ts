@@ -10,29 +10,26 @@ import { AddToCartModalComponent } from './add-to-cart-modal/add-to-cart-modal.c
 import { EditBookModalComponent } from './edit-book-modal/edit-book-modal.component';
 import { SortableDirective } from '../directives/sortable.directive';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: 
   [
     BooksListComponent, 
     AddToCartModalComponent, 
-    EditBookModalComponent,
-    SortableDirective
+    EditBookModalComponent
   ],
   imports: [
     CommonModule,
     RouterModule.forRoot(routes),
     FormsModule,
     ReactiveFormsModule,
-    NgbModule
+    NgbModule,
+    SharedModule
   ],
   providers:[
     AuthGuardService,
     CatalogService
-  ],
-  exports:
-  [
-    SortableDirective
   ],
   entryComponents:
   [

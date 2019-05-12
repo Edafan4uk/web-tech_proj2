@@ -12,18 +12,19 @@ import { CatalogModule } from './catalog/catalog.module';
 import { JwtModule } from '@auth0/angular-jwt';
 import { AdminModule } from './admin/admin.module';
 import { HasRoleDirective } from './directives/has-role.directive';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    ShowAuthDirective,
-    HasRoleDirective
+    ShowAuthDirective
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    SharedModule,
     AccountModule,
     HttpClientModule,
     CatalogModule,
@@ -35,7 +36,7 @@ import { HasRoleDirective } from './directives/has-role.directive';
         throwNoTokenError:false
       }
     }),
-    AdminModule
+    AdminModule    
   ],
   providers: [
     {
