@@ -30,25 +30,80 @@ namespace BookStore.Controllers
         [HttpGet("getBooks")]
         public async Task<IActionResult> Get(ForTableModel model)
         {
-            List<BookViewModel> list = new List<BookViewModel>();
-
             if(!(await _context.Books.AnyAsync()&&await _context.Authors.AnyAsync()))
             {
-                return Ok(new List<BookViewModel>());
+                return Ok(new
+                {
+                    entities = new List<BookViewModel>(),
+                    total = 0
+                });
             }
 
+            var propInfo = GetPropertyInfo(model.SortColumn);
 
-            var books = await _context.Books
+            var bookList = User.IsInRole("Moderator") || User.IsInRole("Admin") ?
+                _context.Books : _context.Books.Where(b => b.IsVisibleInCatalog);
+
+            if (model.SearchTerm != null)
+            {
+                bookList = bookList
+                    .Where(b=>b.Name.ToLower().Contains(model.SearchTerm)||
+                        b.Author.Name.ToLower().Contains(model.SearchTerm));
+            }
+
+            switch (model.SortDirection)
+            {
+                case "asc":
+                    bookList = propInfo != null ?
+                       bookList.OrderBy(b => propInfo.GetValue(b)) : bookList.OrderBy(b => b.Id);
+                    break;
+                case "desc":
+                    bookList = propInfo != null ?
+                        bookList.OrderByDescending(b => propInfo.GetValue(b)) :
+                        bookList.OrderByDescending(b => b.Id);
+                    break;
+                default:
+                    bookList = propInfo == null ?
+                        bookList : bookList.OrderBy(b => propInfo.GetValue(b));
+                    break;
+            }
+            var books = await bookList
                 .Include(b=>b.Author)
-                .AsNoTracking()
+                .Skip((model.Page - 1) * model.PageSize)
+                .Take(model.PageSize)
                 .ToListAsync();
 
-            foreach (var item in books)
-            {
-                list.Add(_mapper.Map<BookViewModel>(item));
-            }
+            var total = await bookList.CountAsync();
 
-            return Ok(list);
+            if (!(User.IsInRole("Admin") || User.IsInRole("Moderator"))){
+                List<BookViewModel> bookViews = new List<BookViewModel>();
+
+                foreach (var item in books)
+                {
+                    bookViews.Add(_mapper.Map<BookViewModel>(item));
+                }
+
+                return Ok(new
+                {
+                    entities = bookViews,
+                    total
+                });
+            }
+            else
+            {
+                List<BookForAdminViewModel> bookForAdmins = new List<BookForAdminViewModel>();
+
+                foreach (var item in books)
+                {
+                    bookForAdmins.Add(_mapper.Map<BookForAdminViewModel>(item));
+                }
+
+                return Ok(new
+                {
+                    entities = bookForAdmins,
+                    total
+                });
+            }
         }
 
         [HttpPost("addBook")]
@@ -95,6 +150,7 @@ namespace BookStore.Controllers
 
             return Ok(_mapper.Map<BookForAdminViewModel>(book));
         }    
+
         [HttpDelete("deleteBook/{id}")]
         [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> DeleteBook(int id)
@@ -104,6 +160,14 @@ namespace BookStore.Controllers
 
             if(book!=null)
             {
+                if (await _context.BookUsers.AnyAsync())
+                {
+                    var userBooks = await _context.BookUsers
+                        .Where(bu => bu.BookId == book.Id)
+                        .ToListAsync();
+
+                    _context.BookUsers.RemoveRange(userBooks);
+                }
                 _context.Books.Remove(book);
 
                 await _context.SaveChangesAsync();
@@ -111,8 +175,11 @@ namespace BookStore.Controllers
                 return Ok("Book was removed from database");
             }
 
+            
+
             return BadRequest($"There is no book with id : {id} in database");
         }
+
         [HttpPut("updateBook/{id}")]
         [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> UpdateBook(int id, [FromBody] BookForAdminViewModel model)
@@ -127,7 +194,11 @@ namespace BookStore.Controllers
 
             var author = book.Author;
 
-            book = _mapper.Map<Book>(model);
+            book.Name = model.Name;
+            book.Price = model.Price;
+            book.IsVisibleInCatalog = model.IsVisible;
+            book.CommentsActive = model.CommentsActive;
+            book.AmInStock = model.AmInStock.Value;        
 
             if (model.AuthorName != author.Name)
             {
@@ -135,16 +206,19 @@ namespace BookStore.Controllers
                     .FirstOrDefaultAsync(a => a.Name == model.AuthorName);
 
                 book.Author = author ?? _context.Authors.Add(new Author { Name = model.AuthorName }).Entity;
-            }            
+            }                        
+            
+            _context.Books.Update(book);
 
             await _context.SaveChangesAsync();
 
             return Ok(_mapper.Map<BookForAdminViewModel>(book));
         }
+
         private PropertyInfo GetPropertyInfo(string columnName)
         {
             columnName = columnName ?? "Id";
-            var type = typeof(User);
+            var type = typeof(Book);
             return type.GetProperty(columnName);
         }
     }

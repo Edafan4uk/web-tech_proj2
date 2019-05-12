@@ -17,11 +17,17 @@ namespace BookStore.Helpers.Mappers
 
             CreateMap<Book, BookForAdminViewModel>()
                 .ForMember(dest=>dest.AuthorName, o=>o.MapFrom(b=>b.Author.Name))
+                .ForMember(dest=>dest.IsVisible, o=>o.MapFrom(b=>b.IsVisibleInCatalog))
                 .ReverseMap();
 
             CreateMap<Book, BookViewModel>()
                 .ForMember(dest => dest.AuthorName, o => o.MapFrom(b => b.Author.Name))
                 .ReverseMap();
+
+            CreateMap<BookUser, CardItemViewModel>()
+                .ForMember(dest => dest.BookName, o => o.MapFrom(b => b.Book.Name))
+                .ForMember(dest => dest.AuthorName, o => o.MapFrom(b => b.Book.Author.Name))
+                .ForMember(dest => dest.BookId, o => o.MapFrom(b => b.Id));
         }
     }
 }

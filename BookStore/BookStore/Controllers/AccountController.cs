@@ -166,12 +166,13 @@ namespace BookStore
                 claims.Add(new Claim(ClaimTypes.Role, item));
             }
             claims.Add(new Claim(ClaimTypes.Name, user.UserName));
+            claims.Add(new Claim("Id", user.Id.ToString()));
             var tokenOptions = new JwtSecurityToken(
                     issuer: val.Issuer,
                     audience: val.Audience,
                     notBefore: now,
                     claims: claims,
-                    expires: now.AddMinutes(20),
+                    expires: now.AddHours(5),
                     signingCredentials: val.SigningCredentials
             );
 
