@@ -16,6 +16,7 @@ export class CatalogService extends AbstractService<Book>{
    }
 
    addBook(book:BookForAdmin):Observable<BookForAdmin>{
+     console.log(book)
      return this.http.post<BookForAdmin>(`${this.apiEntityUrl}/addBook`,book);
    }
 
@@ -24,11 +25,11 @@ export class CatalogService extends AbstractService<Book>{
    }
 
    deleteBook(id:number):Observable<any>{
-     return this.http.delete(`${this.apiEntityUrl}/deleteBook/?id=${id}`);
+     return this.http.delete(`${this.apiEntityUrl}/deleteBook/${id}`);
    }
 
    updateBook(book:BookForAdmin):Observable<BookForAdmin>{
-     return this.http.put<BookForAdmin>(`${this.apiEntityUrl}/updateBook/?id=${book.id}`,book);
+     return this.http.put<BookForAdmin>(`${this.apiEntityUrl}/updateBook/${book.Id}`,book);
    }
 
 }

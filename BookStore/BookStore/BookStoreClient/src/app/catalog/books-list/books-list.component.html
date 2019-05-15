@@ -34,7 +34,8 @@
                 <ngb-highlight [result]="book.authorName" [term]="service.searchTerm"></ngb-highlight>
             </td>
             <td class="col-md">
-              <!-- <button class="btn btn-primary" (click)="openModal(user)">Edit roles</button> -->
+              <button *appHasRole="['Admin','Moderator']" class="btn btn-primary" (click)="delete(book)">Delete book</button>
+              <button *appHasRole="['Admin','Moderator']" class="btn btn-primary mt-1" (click)="openModal(book)">Edit book</button>
             </td>
         </tr>
       </tbody>

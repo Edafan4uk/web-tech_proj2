@@ -19,62 +19,77 @@ export class AddToCartModalComponent implements OnInit {
     this.fb = this.injector.get(FormBuilder);
    }
 
+
+  @Input() book:BookForAdmin;
+
   ngOnInit() {
     this.bookForm = this.createForm();
   }
 
 
   createForm():FormGroup{
-    return this.fb.group({
-      "name":new FormControl("", [
+    let form = this.fb.group({
+      name:new FormControl('', [
         Validators.required,
         Validators.maxLength(50)
       ]),
-      "price":new FormControl(0,[
+      price:new FormControl(0,[
           Validators.required,
-          this.priceValidator
+          this.priceValidator,          
+          Validators.pattern("^[0-9]+$")
         ]
       ),
-      "amInStock":new FormControl(0,[
-          this.amValidator
+      amInStock:new FormControl(0,[
+          this.amValidator,
+          Validators.pattern("^[0-9]+$")
         ]
       ),
-      "authorName": new FormControl("",[
+      authorName: new FormControl("",[
           Validators.required,
           Validators.maxLength(50)
         ]
       ),
-      "commentsActive": new FormControl({
-        value:false,
-        validators:[
+      commentsActive: new FormControl(false, 
+        [
           Validators.required
-        ]
-      }),
-      "isVisible": new FormControl({
-        value:true,
-        validators:[
-          Validators.required
-        ]
-      })
-    });    
+        ]),
+      isVisible: new FormControl(true,[
+        Validators.required
+      ])
+    });
+    if(!this.book){
+      return form;
+    }
+    else{
+      console.log( this.book)
+      form.setValue({
+        name: this.book["name"],
+        price: this.book['price'],
+        amInStock: this.book['amInStock'],
+        authorName: this.book['authorName'],
+        commentsActive: this.book['commentsActive'],
+        isVisible: this.book['isVisible']
+      });
+      return form;
+    }    
   }
 
   amValidator(control:FormControl):{[s:string]:boolean}{
-    if(control.value <= 0 || control.value > 100){
-      return {"amInStock":true}
+    if(control.value <= 0 || control.value > 10){
+      return {"AmInStock":true}
     }
     return null;
   }
 
   private priceValidator(control:FormControl):{[s:string]:boolean}{
     if(control.value <= 0 || control.value > 2000){
-      return {"price":true}
+      return {"Price":true}
     }
     return null;
   }
 
   submit(){
-    let book: BookForAdmin =  Object.assign({},this.bookForm.value);
+    let book: BookForAdmin = Object.assign({},this.bookForm.value) as BookForAdmin;
 
     this.activeModal.close(book);
   }

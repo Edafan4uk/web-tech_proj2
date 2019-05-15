@@ -165,7 +165,7 @@ namespace BookStore.Controllers
 
                 await _context.SaveChangesAsync();
 
-                return Ok("Book was removed from database");
+                return Ok();
             }
 
             

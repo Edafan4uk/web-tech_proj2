@@ -40,7 +40,7 @@ export class BooksListComponent implements OnInit {
     this.service.sortColumn = column;
     this.service.sortDirection = direction
   }
-  openModal(){
+  openModal(book: BookForAdmin){
     let modal = this.modal.open(AddToCartModalComponent, {
       centered:true,
       injector:this.injector,
@@ -48,14 +48,34 @@ export class BooksListComponent implements OnInit {
         return confirm("There are unsaved changes.Are you sure you want to close the window?");
       }
     });
-    modal.result.then((result:BookForAdmin)=>{
-      console.log(result)
-      let add = this.service.addBook(result);
-      add.subscribe((b:BookForAdmin)=>{
-        this.service.page = 1;
-      })},
-    (reason:any)=>{});
+    if(book){
+      console.log(book)
+      modal.componentInstance.book = Object.assign({},book);
+      modal.result.then((result:BookForAdmin)=>{
+        console.log(result)
+        let add = this.service.updateBook(result);
+        add.subscribe((b:BookForAdmin)=>{
+          this.service.page = 1;
+        })},
+      (reason:any)=>{});
+    }
+    else{
+      modal.result.then((result:BookForAdmin)=>{
+        console.log(result)
+        let add = this.service.addBook(result);
+        add.subscribe((b:BookForAdmin)=>{
+          this.service.page = 1;
+        })},
+      (reason:any)=>{});
+    }
   
+  }
+
+  delete(book){
+    console.log(book.id);
+    this.service.deleteBook(book.id).subscribe(()=>{
+      this.service.page = 1;
+    })
   }
 
 }
