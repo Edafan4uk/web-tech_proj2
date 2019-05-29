@@ -13,6 +13,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { AdminModule } from './admin/admin.module';
 import { HasRoleDirective } from './directives/has-role.directive';
 import { SharedModule } from './shared/shared.module';
+import { ShoppingCardModule } from './shopping-card/shopping-card.module';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { SharedModule } from './shared/shared.module';
         throwNoTokenError:false
       }
     }),
-    AdminModule    
+    AdminModule,
+    ShoppingCardModule    
   ],
   providers: [
     {

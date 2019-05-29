@@ -10,6 +10,7 @@ export class AuthGuardService implements CanActivate{
   canActivate():boolean{
     if(!this.userService.isAuthenticatedGuards()){
       this.router.navigate(['account/login']);
+      this.router.onSameUrlNavigation = "reload";
       return false;
     }
     return true;

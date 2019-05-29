@@ -70,6 +70,7 @@ export class UserService{
 
   logout(){
     localStorage.removeItem('auth_token');
+    this.isAuthenticatedGuards();
   }
 
   facebookLogin(accessToken:string){

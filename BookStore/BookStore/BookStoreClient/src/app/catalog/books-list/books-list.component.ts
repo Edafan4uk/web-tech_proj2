@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewChildren, QueryList, Injector } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren, QueryList, Injector, OnDestroy } from '@angular/core';
 import { CatalogService } from 'src/app/services/catalog.service';
 import { Book } from '../Models/Book';
 import { Observable } from 'rxjs';
@@ -6,6 +6,8 @@ import { SortableDirective, SortEvent } from 'src/app/directives/sortable.direct
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddToCartModalComponent } from '../add-to-cart-modal/add-to-cart-modal.component';
 import { BookForAdmin } from '../Models/BookForAdmin';
+import { UserService } from 'src/app/services/user.service';
+import { destroyView } from '@angular/core/src/view/view';
 
 @Component({
   selector: 'app-books-list',
@@ -19,8 +21,12 @@ export class BooksListComponent implements OnInit {
   
   constructor(public service: CatalogService,
     private modal: NgbModal,
-    private injector: Injector) {
+    private injector: Injector,
+    private userService: UserService) {
     
+    this.userService.currentToken.subscribe(()=>{
+      //this.service.page = 1;
+    })
   }
 
   @ViewChildren(SortableDirective) headers: QueryList<SortableDirective>;
@@ -28,6 +34,7 @@ export class BooksListComponent implements OnInit {
   ngOnInit() {
     this.books$ = this.service.entities$;
     this.total$ = this.service.total$;    
+    
   }
 
   onSort({column, direction}:SortEvent){

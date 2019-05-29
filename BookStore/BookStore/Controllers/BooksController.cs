@@ -75,11 +75,11 @@ namespace BookStore.Controllers
 
             var total = await bookList.CountAsync();
 
-            List<BookViewModel> bookViews = new List<BookViewModel>();
+            List<BookForAdminViewModel> bookViews = new List<BookForAdminViewModel>();
 
             foreach (var item in books)
             {
-                bookViews.Add(_mapper.Map<BookViewModel>(item));
+                bookViews.Add(_mapper.Map<BookForAdminViewModel>(item));
             }
 
             return Ok(new

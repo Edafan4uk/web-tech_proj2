@@ -89,7 +89,13 @@ export class AddToCartModalComponent implements OnInit {
   }
 
   submit(){
+
     let book: BookForAdmin = Object.assign({},this.bookForm.value) as BookForAdmin;
+
+    console.log
+
+    if(this.book)
+      book.Id = this.book["id"];
 
     this.activeModal.close(book);
   }

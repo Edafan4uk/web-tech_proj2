@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { SortDirection } from '../../directives/sortable.directive';
 import { PipeTransform } from '@angular/core';
-import { BehaviorSubject, Subject, Observable } from 'rxjs';
-import { tap, debounceTime, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, Subject, Observable, observable } from 'rxjs';
+import { tap, debounceTime, switchMap, catchError } from 'rxjs/operators';
 
 export interface SearchResult<T>{
   entities: T[];
@@ -64,7 +64,7 @@ export abstract class AbstractService<T> {
 
   protected _state: State = {
     page: 1,
-    pageSize: 4,
+    pageSize: 10,
     searchTerm: '',
     sortColumn: '',
     sortDirection: ''
@@ -76,7 +76,13 @@ export abstract class AbstractService<T> {
       this._search$.pipe(
         tap(()=>this._loading$.next(true)),
         debounceTime(500),
-        switchMap(()=>this._search()),
+        switchMap(()=>this._search().pipe(
+          catchError(()=>{
+            this._entities$.next([]);
+            this._total$.next(0);
+            return Observable.throw("");
+          })
+        )),
         tap(()=>this._loading$.next(false))
       ).subscribe((res:SearchResult<T>)=>{
         this._entities$.next(res.entities)
