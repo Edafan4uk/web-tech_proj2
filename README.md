@@ -13,7 +13,7 @@ Repository structure
   * */ViewModels* - DTO classes to interact with 'clients'
 * *web-tech_proj2/BookStore/BookStore/BookStoreClient* - **Angular 6 application**
 * *web-tech_proj2/BookStore/DAL* - **Data Access Layer**
-  * */Data/BookStoreContext.cs* - configured 'DbContext' class
+  * */Data/BookStoreContext.cs* - configured 'IdentityDbContext' class
   * */Models* - Code-First domain classes
   * */Configurations* - configuration classes, which configure all DB mappings along with table relationships
   * */Migrations* - EF Core migrations
